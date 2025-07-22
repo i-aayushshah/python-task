@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Error - Sarbottam Cement Limited{% endblock %}
+
+{% block content %}
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <i class="fas fa-exclamation-triangle text-red-500 text-6xl mb-6"></i>
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">Something went wrong</h1>
+        <p class="text-xl text-gray-600 mb-8">We apologize for the inconvenience. Please try again later.</p>
+        {% if error %}
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-8 max-w-lg mx-auto">
+            <p class="text-red-800 text-sm">{{ error }}</p>
+        </div>
+        {% endif %}
+        <a href="{% url 'sarbottam:company_profile' %}" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
+            Back to Home
+        </a>
+    </div>
+</section>
+{% endblock %}

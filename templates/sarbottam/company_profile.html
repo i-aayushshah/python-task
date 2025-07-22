@@ -1,0 +1,311 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ company.name }} - Leading Cement Manufacturer in Nepal{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="cement-gradient text-white py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="animate-on-scroll">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">
+                    {{ company.name }}
+                </h1>
+                <p class="text-xl mb-8 text-gray-200">
+                    {{ company.description }}
+                </p>
+                <div class="flex flex-wrap gap-4 mb-8">
+                    <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full">
+                        <span class="font-semibold">{{ company.symbol }}</span>
+                    </div>
+                    <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full">
+                        <span>{{ company.sector }}</span>
+                    </div>
+                    <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full">
+                        <span>{{ company.company_type }}</span>
+                    </div>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#company-details" class="bg-white text-indigo-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                        Learn More
+                    </a>
+                    <a href="{% url 'sarbottam:news_list' %}" class="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition-colors">
+                        Latest News
+                    </a>
+                </div>
+            </div>
+            <div class="animate-on-scroll">
+                <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8">
+                    <h3 class="text-2xl font-bold mb-6">Stock Information</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold">{{ company.market_price|default:"N/A" }}</div>
+                            <div class="text-sm text-gray-200">Market Price (NPR)</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold">{{ company.pe_ratio|default:"N/A" }}</div>
+                            <div class="text-sm text-gray-200">P/E Ratio</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold">{{ company.employees }}</div>
+                            <div class="text-sm text-gray-200">Employees</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold">NEPSE</div>
+                            <div class="text-sm text-gray-200">Listed On</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Company Details Section -->
+<section id="company-details" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 animate-on-scroll">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Company Overview</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Pioneering the cement industry in Nepal with European technology and unwavering commitment to quality.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Company Information -->
+            <div class="lg:col-span-2 animate-on-scroll">
+                <div class="bg-gray-50 rounded-xl p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">About Sarbottam Cement</h3>
+                    <p class="text-gray-700 leading-relaxed mb-6">
+                        {{ company.description }}
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-6">
+                        {{ company.industry_position }}
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt text-indigo-600 text-xl mr-3"></i>
+                            <div>
+                                <div class="font-semibold text-gray-900">Headquarters</div>
+                                <div class="text-gray-600">{{ company.headquarters }}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-globe text-indigo-600 text-xl mr-3"></i>
+                            <div>
+                                <div class="font-semibold text-gray-900">Parent Group</div>
+                                <div class="text-gray-600">{{ company.parent_group }}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-users text-indigo-600 text-xl mr-3"></i>
+                            <div>
+                                <div class="font-semibold text-gray-900">Workforce</div>
+                                <div class="text-gray-600">{{ company.employees }}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-link text-indigo-600 text-xl mr-3"></i>
+                            <div>
+                                <div class="font-semibold text-gray-900">Website</div>
+                                <a href="{{ company.website }}" target="_blank" class="text-indigo-600 hover:text-indigo-800">
+                                    Official Website
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="animate-on-scroll">
+                <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-xl p-8">
+                    <h3 class="text-xl font-bold mb-6">Key Highlights</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span>Stock Symbol</span>
+                            <span class="font-bold">{{ company.symbol }}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Sector</span>
+                            <span class="font-bold">{{ company.sector }}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Company Type</span>
+                            <span class="font-bold">{{ company.company_type }}</span>
+                        </div>
+                        {% if company.market_price %}
+                        <div class="flex items-center justify-between border-t border-white border-opacity-20 pt-4">
+                            <span>Current Price</span>
+                            <span class="font-bold text-yellow-300">NPR {{ company.market_price }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Industry Leadership -->
+                <div class="bg-white border border-gray-200 rounded-xl p-6 mt-6">
+                    <h4 class="text-lg font-bold text-gray-900 mb-4">Industry Leadership</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-star text-yellow-500 mr-2"></i>
+                            <span class="text-sm text-gray-700">First European Production Line</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-star text-yellow-500 mr-2"></i>
+                            <span class="text-sm text-gray-700">Quality Pioneer in Nepal</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-star text-yellow-500 mr-2"></i>
+                            <span class="text-sm text-gray-700">NEPSE Listed Company</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Latest News Section -->
+{% if featured_news or recent_news %}
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 animate-on-scroll">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Latest News & Updates</h2>
+            <p class="text-xl text-gray-600">Stay updated with the latest developments from Sarbottam Cement</p>
+        </div>
+
+        <!-- Featured News -->
+        {% if featured_news %}
+        <div class="mb-12 animate-on-scroll">
+            <h3 class="text-2xl font-bold text-gray-900 mb-8">Featured News</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for news in featured_news %}
+                <article class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+                    {% if news.news_image %}
+                    <img src="{{ news.news_image.url }}" alt="{{ news.news_title }}" class="w-full h-48 object-cover">
+                    {% else %}
+                    <div class="w-full h-48 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                        <i class="fas fa-newspaper text-white text-4xl"></i>
+                    </div>
+                    {% endif %}
+                    <div class="p-6">
+                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                            <i class="fas fa-calendar mr-2"></i>
+                            {{ news.news_date|date:"M d, Y" }}
+                            <span class="ml-4 bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">Featured</span>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-3">{{ news.news_title }}</h4>
+                        <p class="text-gray-600 mb-4">{{ news.news_body|truncatewords:20 }}</p>
+                        {% if news.slug %}
+                        <a href="{% url 'sarbottam:news_detail' news.slug %}" class="text-indigo-600 hover:text-indigo-800 font-semibold">
+                            Read more <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Recent News -->
+        {% if recent_news %}
+        <div class="animate-on-scroll">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-2xl font-bold text-gray-900">Recent Updates</h3>
+                <a href="{% url 'sarbottam:news_list' %}" class="text-indigo-600 hover:text-indigo-800 font-semibold">
+                    View all news <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for news in recent_news %}
+                <article class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="flex items-center text-sm text-gray-500 mb-2">
+                        <i class="fas fa-calendar mr-2"></i>
+                        {{ news.news_date|date:"M d, Y" }}
+                        {% if news.author %}
+                        <span class="ml-4">by {{ news.author }}</span>
+                        {% endif %}
+                    </div>
+                    <h4 class="text-lg font-bold text-gray-900 mb-3">{{ news.news_title }}</h4>
+                    <p class="text-gray-600 mb-4">{{ news.news_body|truncatewords:15 }}</p>
+                    {% if news.slug %}
+                    <a href="{% url 'sarbottam:news_detail' news.slug %}" class="text-indigo-600 hover:text-indigo-800 font-semibold">
+                        Read more <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                    {% endif %}
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Recent Achievements -->
+{% if recent_achievements %}
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 animate-on-scroll">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Recent Achievements</h2>
+            <p class="text-xl text-gray-600">Milestones that define our journey of excellence</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-on-scroll">
+            {% for achievement in recent_achievements %}
+            <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 card-hover">
+                <div class="flex items-center mb-4">
+                    {% if achievement.category == 'award' %}
+                        <i class="fas fa-trophy text-yellow-500 text-2xl mr-3"></i>
+                    {% elif achievement.category == 'certification' %}
+                        <i class="fas fa-certificate text-blue-500 text-2xl mr-3"></i>
+                    {% elif achievement.category == 'milestone' %}
+                        <i class="fas fa-flag text-green-500 text-2xl mr-3"></i>
+                    {% elif achievement.category == 'recognition' %}
+                        <i class="fas fa-medal text-purple-500 text-2xl mr-3"></i>
+                    {% else %}
+                        <i class="fas fa-star text-indigo-500 text-2xl mr-3"></i>
+                    {% endif %}
+                    <span class="text-sm font-semibold text-gray-500 uppercase tracking-wider">{{ achievement.get_category_display }}</span>
+                </div>
+                <h4 class="text-lg font-bold text-gray-900 mb-3">{{ achievement.title }}</h4>
+                <p class="text-gray-600 mb-4">{{ achievement.description|truncatewords:20 }}</p>
+                <div class="text-sm text-gray-500">
+                    <i class="fas fa-calendar mr-2"></i>
+                    {{ achievement.achievement_date|date:"M Y" }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-12 animate-on-scroll">
+            <a href="{% url 'sarbottam:achievements' %}" class="inline-flex items-center bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
+                View All Achievements
+                <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Call to Action -->
+<section class="py-20 cement-gradient text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-on-scroll">
+        <h2 class="text-4xl font-bold mb-4">Building Nepal's Future</h2>
+        <p class="text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
+            With our European technology and commitment to quality, we continue to strengthen Nepal's infrastructure and contribute to the nation's development.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'sarbottam:financial_data' %}" class="bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                View Financial Data
+            </a>
+            <a href="{% url 'sarbottam:news_list' %}" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition-colors">
+                Latest News
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

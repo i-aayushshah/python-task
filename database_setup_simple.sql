@@ -1,14 +1,14 @@
--- MySQL Database Setup Script for Sarbottam Cement Limited Company Profile
--- Created for Django application with comprehensive company and news management
+-- Simple MySQL Database Setup Script for Sarbottam Cement Limited
+-- Compatible with most MySQL versions
 
 -- Create database
 CREATE DATABASE IF NOT EXISTS sarbottam_cement_db;
 USE sarbottam_cement_db;
 
--- Set charset and collation
+-- Set charset
 ALTER DATABASE sarbottam_cement_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- Company table - Main company profile information
+-- Company table
 CREATE TABLE IF NOT EXISTS sarbottam_company (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(200) NOT NULL DEFAULT 'Sarbottam Cement Limited',
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS sarbottam_company (
     company_type VARCHAR(50) NOT NULL DEFAULT 'Public Company',
     employees VARCHAR(50) NOT NULL DEFAULT '501-1,000 employees',
     description TEXT NOT NULL,
-    website VARCHAR(200) NOT NULL DEFAULT 'https://saurabhgroup.com/sarbottam-cement',
+    website VARCHAR(200) NOT NULL DEFAULT 'https://sarbottamcement.com.np',
     email VARCHAR(254) NULL,
     phone VARCHAR(50) NULL,
     market_price DECIMAL(10,2) NULL,
@@ -32,8 +32,8 @@ CREATE TABLE IF NOT EXISTS sarbottam_company (
     annual_revenue VARCHAR(100) NULL,
     net_profit VARCHAR(100) NULL,
     total_assets VARCHAR(100) NULL,
-    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-    updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- Company News table
@@ -41,22 +41,18 @@ CREATE TABLE IF NOT EXISTS sarbottam_companynews (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     company_id BIGINT NOT NULL,
     news_title VARCHAR(300) NOT NULL,
-    news_date DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    news_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     news_image VARCHAR(100) NULL,
     news_body TEXT NOT NULL,
     summary TEXT NULL,
     category VARCHAR(100) NULL,
     is_featured TINYINT(1) NOT NULL DEFAULT 0,
     is_published TINYINT(1) NOT NULL DEFAULT 1,
-    slug VARCHAR(50) NULL UNIQUE,
-    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-    updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    slug VARCHAR(100) NULL UNIQUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (company_id) REFERENCES sarbottam_company(id) ON DELETE CASCADE,
-    INDEX idx_news_date (news_date),
-    INDEX idx_news_featured (is_featured),
-    INDEX idx_news_published (is_published),
-    INDEX idx_news_slug (slug)
+    FOREIGN KEY (company_id) REFERENCES sarbottam_company(id) ON DELETE CASCADE
 );
 
 -- Company Financial data table
@@ -72,12 +68,10 @@ CREATE TABLE IF NOT EXISTS sarbottam_companyfinancial (
     shareholders_equity DECIMAL(15,2) NULL,
     report_date DATE NOT NULL,
     report_file VARCHAR(100) NULL,
-    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-    updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (company_id) REFERENCES sarbottam_company(id) ON DELETE CASCADE,
-    INDEX idx_financial_date (report_date),
-    INDEX idx_financial_period (report_period)
+    FOREIGN KEY (company_id) REFERENCES sarbottam_company(id) ON DELETE CASCADE
 );
 
 -- Company Achievements table
@@ -88,15 +82,13 @@ CREATE TABLE IF NOT EXISTS sarbottam_companyachievement (
     description TEXT NOT NULL,
     achievement_date DATE NOT NULL,
     category VARCHAR(100) NULL,
-    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-    updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (company_id) REFERENCES sarbottam_company(id) ON DELETE CASCADE,
-    INDEX idx_achievement_date (achievement_date),
-    INDEX idx_achievement_category (category)
+    FOREIGN KEY (company_id) REFERENCES sarbottam_company(id) ON DELETE CASCADE
 );
 
--- Insert sample data for Sarbottam Cement Limited
+-- Insert sample company data
 INSERT INTO sarbottam_company (
     name, symbol, sector, founded_year, headquarters, company_type, employees,
     description, website, market_price, market_cap, pe_ratio, dividend_yield,
@@ -121,17 +113,14 @@ INSERT INTO sarbottam_company (
     '1.8 billion NPR',
     '180 million NPR',
     '2.5 billion NPR'
-) ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP(6);
-
--- Get the company ID for sample data
-SET @company_id = (SELECT id FROM sarbottam_company WHERE symbol = 'SARBTM' LIMIT 1);
+);
 
 -- Insert sample news data
 INSERT INTO sarbottam_companynews (
     company_id, news_title, news_date, news_body, summary, category, is_featured, is_published, slug
 ) VALUES
 (
-    @company_id,
+    1,
     'Sarbottam Cement Reports Strong Q3 Financial Results with 15% Revenue Growth',
     '2024-07-15 10:00:00',
     'Sarbottam Cement Limited today announced its financial results for the third quarter ended December 2024, reporting a robust 15% year-over-year revenue growth to NPR 450 million. The company\'s strong performance was driven by increased domestic demand for construction materials and successful market penetration strategies.',
@@ -142,7 +131,7 @@ INSERT INTO sarbottam_companynews (
     'sarbottam-cement-q3-results-2024'
 ),
 (
-    @company_id,
+    1,
     'Sarbottam Cement Launches Environmental Sustainability Initiative',
     '2024-07-02 14:30:00',
     'Sarbottam Cement Limited has launched an ambitious environmental sustainability initiative as part of its commitment to responsible manufacturing and environmental stewardship. The program aims to reduce the company\'s carbon footprint by 25% over the next three years.',
@@ -153,7 +142,7 @@ INSERT INTO sarbottam_companynews (
     'sarbottam-cement-sustainability-initiative-2024'
 ),
 (
-    @company_id,
+    1,
     'Board of Directors Approves Dividend Distribution for Shareholders',
     '2024-06-28 11:00:00',
     'The Board of Directors of Sarbottam Cement Limited has approved the distribution of dividend to shareholders at the rate of NPR 12 per share for the fiscal year 2023/24. This represents a significant 20% increase from the previous year\'s dividend of NPR 10 per share.',
@@ -170,7 +159,7 @@ INSERT INTO sarbottam_companyfinancial (
     total_assets, total_liabilities, shareholders_equity, report_date
 ) VALUES
 (
-    @company_id,
+    1,
     'Q3 2024',
     450.0,
     45.0,
@@ -181,7 +170,7 @@ INSERT INTO sarbottam_companyfinancial (
     '2024-07-15'
 ),
 (
-    @company_id,
+    1,
     'Q2 2024',
     420.0,
     38.0,
@@ -192,7 +181,7 @@ INSERT INTO sarbottam_companyfinancial (
     '2024-04-15'
 ),
 (
-    @company_id,
+    1,
     'Q1 2024',
     380.0,
     32.0,
@@ -208,28 +197,28 @@ INSERT INTO sarbottam_companyachievement (
     company_id, title, description, achievement_date, category
 ) VALUES
 (
-    @company_id,
+    1,
     'First European Production Line in Nepal',
     'Sarbottam Cement became the first and only cement manufacturer in Nepal to implement a completely European production line, setting new industry standards.',
     '2012-06-15',
     'Technology Innovation'
 ),
 (
-    @company_id,
+    1,
     'ISO 9001:2015 Quality Certification',
     'Successfully obtained international quality management certification, demonstrating commitment to product quality and customer satisfaction.',
     '2018-03-20',
     'Quality Certification'
 ),
 (
-    @company_id,
+    1,
     'Best Cement Company Award 2023',
     'Recognized as the Best Cement Company by Nepal Chamber of Commerce for outstanding contribution to the construction industry.',
     '2023-11-10',
     'Industry Recognition'
 ),
 (
-    @company_id,
+    1,
     'Environmental Excellence Award',
     'Received recognition for environmental sustainability initiatives and commitment to eco-friendly manufacturing practices.',
     '2023-08-05',
@@ -238,52 +227,14 @@ INSERT INTO sarbottam_companyachievement (
 
 -- Create indexes for better performance
 CREATE INDEX idx_company_symbol ON sarbottam_company(symbol);
-CREATE INDEX idx_company_sector ON sarbottam_company(sector);
-CREATE INDEX idx_news_company_date ON sarbottam_companynews(company_id, news_date);
-CREATE INDEX idx_financial_company_year ON sarbottam_companyfinancial(company_id, fiscal_year);
-CREATE INDEX idx_achievement_company_date ON sarbottam_companyachievement(company_id, achievement_date);
-
--- Create views for easier data access
-CREATE VIEW v_latest_company_news AS
-SELECT
-    cn.id,
-    cn.news_title,
-    cn.news_date,
-    cn.news_body,
-    cn.summary,
-    cn.category,
-    cn.is_featured,
-    cn.slug,
-    c.name as company_name,
-    c.symbol
-FROM sarbottam_companynews cn
-JOIN sarbottam_company c ON cn.company_id = c.id
-WHERE cn.is_published = 1
-ORDER BY cn.news_date DESC;
-
-CREATE VIEW v_company_financial_summary AS
-SELECT
-    cf.company_id,
-    c.name as company_name,
-    c.symbol,
-    cf.report_period,
-    cf.total_revenue,
-    cf.net_income,
-    cf.earnings_per_share,
-    cf.report_date
-FROM sarbottam_companyfinancial cf
-JOIN sarbottam_company c ON cf.company_id = c.id
-ORDER BY cf.report_date DESC;
-
--- Show database structure
-SHOW TABLES;
+CREATE INDEX idx_news_date ON sarbottam_companynews(news_date);
+CREATE INDEX idx_news_published ON sarbottam_companynews(is_published);
+CREATE INDEX idx_financial_date ON sarbottam_companyfinancial(report_date);
+CREATE INDEX idx_achievement_date ON sarbottam_companyachievement(achievement_date);
 
 -- Display sample data
-SELECT 'Company Information:' as Info;
-SELECT name, symbol, sector, headquarters, market_price FROM sarbottam_company LIMIT 1;
-
-SELECT 'Latest News:' as Info;
-SELECT news_title, news_date, is_featured FROM sarbottam_companynews ORDER BY news_date DESC LIMIT 3;
-
-SELECT 'Achievements:' as Info;
-SELECT title, category, achievement_date FROM sarbottam_companyachievement ORDER BY achievement_date DESC LIMIT 3;
+SELECT 'Database setup completed successfully!' as Status;
+SELECT COUNT(*) as 'Total Companies' FROM sarbottam_company;
+SELECT COUNT(*) as 'Total News Articles' FROM sarbottam_companynews;
+SELECT COUNT(*) as 'Total Financial Records' FROM sarbottam_companyfinancial;
+SELECT COUNT(*) as 'Total Achievements' FROM sarbottam_companyachievement;

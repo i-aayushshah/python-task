@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ news.news_title }} - {{ company.name }}{% endblock %}
+
+{% block content %}
+<!-- News Article Hero -->
+<section class="py-12 bg-gray-50">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-8" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="{% url 'sarbottam:company_profile' %}" class="text-gray-700 hover:text-indigo-600">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                        <a href="{% url 'sarbottam:news_list' %}" class="text-gray-700 hover:text-indigo-600">News</a>
+                    </div>
+                </li>
+                <li aria-current="page">
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                        <span class="text-gray-500">{{ news.news_title|truncatechars:30 }}</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+
+        <!-- Article Header -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            {% if news.news_image %}
+            <div class="aspect-w-16 aspect-h-9">
+                <img src="{{ news.news_image.url }}" alt="{{ news.news_title }}"
+                     class="w-full h-64 object-cover">
+            </div>
+            {% endif %}
+
+            <div class="p-8">
+                <div class="flex items-center text-sm text-gray-600 mb-4">
+                    <i class="fas fa-calendar mr-2"></i>
+                    <span>{{ news.news_date|date:"F d, Y" }}</span>
+                    {% if news.category %}
+                    <span class="mx-2">•</span>
+                    <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full text-xs font-medium">
+                        {{ news.category }}
+                    </span>
+                    {% endif %}
+                </div>
+
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                    {{ news.news_title }}
+                </h1>
+
+                {% if news.summary %}
+                <div class="text-xl text-gray-600 mb-8 p-4 bg-gray-50 rounded-lg border-l-4 border-indigo-500">
+                    {{ news.summary }}
+                </div>
+                {% endif %}
+
+                <div class="prose prose-lg max-w-none">
+                    {{ news.news_body|linebreaks }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Back to News -->
+        <div class="text-center mt-8">
+            <a href="{% url 'sarbottam:news_list' %}"
+               class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to News
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Related News -->
+{% if related_news %}
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Related News</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for related in related_news %}
+            <article class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                {% if related.news_image %}
+                <img src="{{ related.news_image.url }}" alt="{{ related.news_title }}"
+                     class="w-full h-48 object-cover rounded-t-lg">
+                {% endif %}
+                <div class="p-6">
+                    <div class="text-sm text-gray-600 mb-2">
+                        <i class="fas fa-calendar mr-1"></i>{{ related.news_date|date:"M d, Y" }}
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3 line-clamp-2">
+                        <a href="{% url 'sarbottam:news_detail' related.slug %}"
+                           class="hover:text-indigo-600 transition-colors">
+                            {{ related.news_title }}
+                        </a>
+                    </h3>
+                    <p class="text-gray-600 text-sm line-clamp-3 mb-4">{{ related.summary }}</p>
+                    <a href="{% url 'sarbottam:news_detail' related.slug %}"
+                       class="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
+                        Read More <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
