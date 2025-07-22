@@ -13,11 +13,13 @@ urlpatterns = [
     path('financial/', views.financial_data, name='financial_data'),
     path('achievements/', views.achievements, name='achievements'),
     path('price-history/', views.price_history, name='price_history'),
+    path('predictions/', views.price_predictions, name='price_predictions'),
 
     # API endpoints
     path('api/company/', views.api_company_data, name='api_company_data'),
     path('api/news/', views.api_latest_news, name='api_latest_news'),
     path('api/price-history/', views.api_price_history, name='api_price_history'),
+    path('api/predictions/', views.api_price_predictions, name='api_price_predictions'),
 ]
 
 # Serve media files during development

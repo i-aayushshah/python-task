@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import Company, CompanyNews, CompanyFinancial, CompanyAchievement, PriceHistory
+from .ml_services import StockPricePredictor
 
 
 def company_profile(request):
@@ -269,6 +270,103 @@ def api_price_history(request):
             })
 
         return JsonResponse({'price_history': price_list})
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+def price_predictions(request):
+    """Price predictions view"""
+    try:
+        company = Company.objects.first()
+        if not company:
+            company = Company.objects.create()
+
+        # Get prediction data
+        predictor = StockPricePredictor()
+        predictions = predictor.predict_next_days(days=5, company_symbol=company.symbol)
+
+        # Calculate changes for template
+        if predictions['success'] and predictions.get('predictions'):
+            for i, pred in enumerate(predictions['predictions']):
+                if i == 0:
+                    # First prediction vs current price
+                    change = pred['predicted_price'] - predictions['last_actual_price']
+                    pred['change'] = change
+                    pred['change_percent'] = (change / predictions['last_actual_price']) * 100
+                else:
+                    # Subsequent predictions vs previous prediction
+                    prev_price = predictions['predictions'][i-1]['predicted_price']
+                    change = pred['predicted_price'] - prev_price
+                    pred['change'] = change
+                    pred['change_percent'] = (change / prev_price) * 100
+
+            # Calculate total 5-day change for the last prediction
+            if len(predictions['predictions']) > 0:
+                last_pred = predictions['predictions'][-1]
+                total_change = last_pred['predicted_price'] - predictions['last_actual_price']
+                total_change_percent = (total_change / predictions['last_actual_price']) * 100
+                last_pred['total_change'] = total_change
+                last_pred['total_change_percent'] = total_change_percent
+
+        # Get latest price data for context
+        latest_prices = PriceHistory.objects.filter(
+            company=company
+        ).order_by('-date')[:10]
+
+        context = {
+            'company': company,
+            'predictions': predictions,
+            'latest_prices': latest_prices,
+        }
+
+        return render(request, 'sarbottam/price_predictions.html', context)
+
+    except Exception as e:
+        return render(request, 'sarbottam/error.html', {'error': str(e)})
+
+
+def api_price_predictions(request):
+    """API endpoint for price predictions"""
+    try:
+        company = Company.objects.first()
+        if not company:
+            return JsonResponse({'error': 'Company not found'}, status=404)
+
+                # Get prediction data
+        predictor = StockPricePredictor()
+        days = int(request.GET.get('days', 5))
+        predictions = predictor.predict_next_days(days=days, company_symbol=company.symbol)
+
+        # Calculate changes for API
+        if predictions['success'] and predictions.get('predictions'):
+            for i, pred in enumerate(predictions['predictions']):
+                if i == 0:
+                    # First prediction vs current price
+                    change = pred['predicted_price'] - predictions['last_actual_price']
+                    pred['change'] = change
+                    pred['change_percent'] = (change / predictions['last_actual_price']) * 100
+                else:
+                    # Subsequent predictions vs previous prediction
+                    prev_price = predictions['predictions'][i-1]['predicted_price']
+                    change = pred['predicted_price'] - prev_price
+                    pred['change'] = change
+                    pred['change_percent'] = (change / prev_price) * 100
+
+            # Calculate total change for the last prediction
+            if len(predictions['predictions']) > 0:
+                last_pred = predictions['predictions'][-1]
+                total_change = last_pred['predicted_price'] - predictions['last_actual_price']
+                total_change_percent = (total_change / predictions['last_actual_price']) * 100
+                last_pred['total_change'] = total_change
+                last_pred['total_change_percent'] = total_change_percent
+
+        # Convert date objects to strings for JSON serialization
+        if predictions['success']:
+            for pred in predictions['predictions']:
+                pred['date'] = pred['date'].strftime('%Y-%m-%d')
+
+        return JsonResponse(predictions)
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)

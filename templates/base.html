@@ -76,6 +76,9 @@
                     <a href="{% url 'sarbottam:price_history' %}" class="text-gray-900 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                         <i class="fas fa-chart-bar mr-1"></i> Price History
                     </a>
+                    <a href="{% url 'sarbottam:price_predictions' %}" class="text-gray-900 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-brain mr-1"></i> AI Predictions
+                    </a>
                     <a href="{% url 'sarbottam:achievements' %}" class="text-gray-900 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                         <i class="fas fa-trophy mr-1"></i> Achievements
                     </a>
@@ -104,6 +107,9 @@
                     </a>
                     <a href="{% url 'sarbottam:price_history' %}" class="text-gray-900 hover:text-indigo-600 block px-3 py-2 rounded-md text-base font-medium">
                         <i class="fas fa-chart-bar mr-2"></i> Price History
+                    </a>
+                    <a href="{% url 'sarbottam:price_predictions' %}" class="text-gray-900 hover:text-indigo-600 block px-3 py-2 rounded-md text-base font-medium">
+                        <i class="fas fa-brain mr-2"></i> AI Predictions
                     </a>
                     <a href="{% url 'sarbottam:achievements' %}" class="text-gray-900 hover:text-indigo-600 block px-3 py-2 rounded-md text-base font-medium">
                         <i class="fas fa-trophy mr-2"></i> Achievements
@@ -154,6 +160,7 @@
                         <li><a href="{% url 'sarbottam:news_list' %}" class="text-gray-300 hover:text-white transition-colors">Latest News</a></li>
                         <li><a href="{% url 'sarbottam:financial_data' %}" class="text-gray-300 hover:text-white transition-colors">Financial Data</a></li>
                         <li><a href="{% url 'sarbottam:price_history' %}" class="text-gray-300 hover:text-white transition-colors">Price History</a></li>
+                        <li><a href="{% url 'sarbottam:price_predictions' %}" class="text-gray-300 hover:text-white transition-colors">AI Predictions</a></li>
                         <li><a href="{% url 'sarbottam:achievements' %}" class="text-gray-300 hover:text-white transition-colors">Achievements</a></li>
                     </ul>
                 </div>
