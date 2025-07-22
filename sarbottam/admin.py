@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Company, CompanyNews, CompanyFinancial, CompanyAchievement
+from .models import Company, CompanyNews, CompanyFinancial, CompanyAchievement, PriceHistory
 
 
 @admin.register(Company)
@@ -110,3 +110,40 @@ class CompanyAchievementAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+
+@admin.register(PriceHistory)
+class PriceHistoryAdmin(admin.ModelAdmin):
+    list_display = ['company', 'date', 'open_price', 'high_price', 'low_price', 'close_price', 'formatted_change', 'volume']
+    list_filter = ['company', 'date']
+    search_fields = ['company__name', 'company__symbol']
+    readonly_fields = ['created_at', 'updated_at']
+    date_hierarchy = 'date'
+    ordering = ['-date']
+
+    fieldsets = (
+        ('Company & Date', {
+            'fields': ('company', 'date')
+        }),
+        ('Price Data', {
+            'fields': ('open_price', 'high_price', 'low_price', 'close_price', 'percentage_change')
+        }),
+        ('Trading Data', {
+            'fields': ('volume', 'turnover')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+    def formatted_change(self, obj):
+        if obj.percentage_change:
+            color = 'green' if obj.percentage_change > 0 else 'red' if obj.percentage_change < 0 else 'gray'
+            sign = '+' if obj.percentage_change > 0 else ''
+            return format_html(
+                '<span style="color: {};">{}{:.2f}%</span>',
+                color, sign, obj.percentage_change
+            )
+        return format_html('<span style="color: gray;">0.00%</span>')
+    formatted_change.short_description = "% Change"

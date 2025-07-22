@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.db.models import Q
-from .models import Company, CompanyNews, CompanyFinancial, CompanyAchievement
+from .models import Company, CompanyNews, CompanyFinancial, CompanyAchievement, PriceHistory
 
 
 def company_profile(request):
@@ -187,6 +187,33 @@ def api_company_data(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 
+def price_history(request):
+    """Price history view"""
+    try:
+        company = Company.objects.first()
+        if not company:
+            company = Company.objects.create()
+
+        # Get price history data - Fixed for MySQL compatibility
+        price_data = PriceHistory.objects.filter(
+            company=company
+        ).order_by('-date')[:30]  # Last 30 days
+
+        # Get latest price for current info
+        latest_price = price_data.first() if price_data else None
+
+        context = {
+            'company': company,
+            'price_data': price_data,
+            'latest_price': latest_price,
+        }
+
+        return render(request, 'sarbottam/price_history.html', context)
+
+    except Exception as e:
+        return render(request, 'sarbottam/error.html', {'error': str(e)})
+
+
 def api_latest_news(request):
     """API endpoint for latest news"""
     try:
@@ -211,6 +238,37 @@ def api_latest_news(request):
             })
 
         return JsonResponse({'news': news_data})
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+def api_price_history(request):
+    """API endpoint for price history data"""
+    try:
+        company = Company.objects.first()
+        if not company:
+            return JsonResponse({'error': 'Company not found'}, status=404)
+
+        # Get latest price history
+        price_data = PriceHistory.objects.filter(
+            company=company
+        ).order_by('-date')[:20]
+
+        price_list = []
+        for price in price_data:
+            price_list.append({
+                'date': price.date.strftime('%Y-%m-%d'),
+                'open': str(price.open_price),
+                'high': str(price.high_price),
+                'low': str(price.low_price),
+                'close': str(price.close_price),
+                'change': str(price.percentage_change) if price.percentage_change else '0.00',
+                'volume': price.volume,
+                'turnover': str(price.turnover) if price.turnover else '0.00',
+            })
+
+        return JsonResponse({'price_history': price_list})
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)

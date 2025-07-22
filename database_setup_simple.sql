@@ -88,6 +88,25 @@ CREATE TABLE IF NOT EXISTS sarbottam_companyachievement (
     FOREIGN KEY (company_id) REFERENCES sarbottam_company(id) ON DELETE CASCADE
 );
 
+-- Price History table
+CREATE TABLE IF NOT EXISTS sarbottam_pricehistory (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    company_id BIGINT NOT NULL,
+    date DATE NOT NULL,
+    open_price DECIMAL(10,2) NOT NULL,
+    high_price DECIMAL(10,2) NOT NULL,
+    low_price DECIMAL(10,2) NOT NULL,
+    close_price DECIMAL(10,2) NOT NULL,
+    percentage_change DECIMAL(8,2) NULL,
+    volume BIGINT NULL,
+    turnover DECIMAL(15,2) NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (company_id) REFERENCES sarbottam_company(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_company_date (company_id, date)
+);
+
 -- Insert sample company data
 INSERT INTO sarbottam_company (
     name, symbol, sector, founded_year, headquarters, company_type, employees,

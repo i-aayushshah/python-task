@@ -73,6 +73,9 @@
                     <a href="{% url 'sarbottam:financial_data' %}" class="text-gray-900 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                         <i class="fas fa-chart-line mr-1"></i> Financial Data
                     </a>
+                    <a href="{% url 'sarbottam:price_history' %}" class="text-gray-900 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-chart-bar mr-1"></i> Price History
+                    </a>
                     <a href="{% url 'sarbottam:achievements' %}" class="text-gray-900 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                         <i class="fas fa-trophy mr-1"></i> Achievements
                     </a>
@@ -96,12 +99,15 @@
                 <a href="{% url 'sarbottam:news_list' %}" class="text-gray-900 hover:text-indigo-600 block px-3 py-2 rounded-md text-base font-medium">
                     <i class="fas fa-newspaper mr-2"></i> News
                 </a>
-                <a href="{% url 'sarbottam:financial_data' %}" class="text-gray-900 hover:text-indigo-600 block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-chart-line mr-2"></i> Financial Data
-                </a>
-                <a href="{% url 'sarbottam:achievements' %}" class="text-gray-900 hover:text-indigo-600 block px-3 py-2 rounded-md text-base font-medium">
-                    <i class="fas fa-trophy mr-2"></i> Achievements
-                </a>
+                                    <a href="{% url 'sarbottam:financial_data' %}" class="text-gray-900 hover:text-indigo-600 block px-3 py-2 rounded-md text-base font-medium">
+                        <i class="fas fa-chart-line mr-2"></i> Financial Data
+                    </a>
+                    <a href="{% url 'sarbottam:price_history' %}" class="text-gray-900 hover:text-indigo-600 block px-3 py-2 rounded-md text-base font-medium">
+                        <i class="fas fa-chart-bar mr-2"></i> Price History
+                    </a>
+                    <a href="{% url 'sarbottam:achievements' %}" class="text-gray-900 hover:text-indigo-600 block px-3 py-2 rounded-md text-base font-medium">
+                        <i class="fas fa-trophy mr-2"></i> Achievements
+                    </a>
             </div>
         </div>
     </nav>
@@ -147,6 +153,7 @@
                         <li><a href="{% url 'sarbottam:company_profile' %}" class="text-gray-300 hover:text-white transition-colors">Company Profile</a></li>
                         <li><a href="{% url 'sarbottam:news_list' %}" class="text-gray-300 hover:text-white transition-colors">Latest News</a></li>
                         <li><a href="{% url 'sarbottam:financial_data' %}" class="text-gray-300 hover:text-white transition-colors">Financial Data</a></li>
+                        <li><a href="{% url 'sarbottam:price_history' %}" class="text-gray-300 hover:text-white transition-colors">Price History</a></li>
                         <li><a href="{% url 'sarbottam:achievements' %}" class="text-gray-300 hover:text-white transition-colors">Achievements</a></li>
                     </ul>
                 </div>

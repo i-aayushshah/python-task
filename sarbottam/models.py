@@ -133,3 +133,48 @@ class CompanyAchievement(models.Model):
         verbose_name = "Company Achievement"
         verbose_name_plural = "Company Achievements"
         ordering = ['-achievement_date']
+
+
+class PriceHistory(models.Model):
+    """Model to store daily stock price history"""
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='price_history')
+
+    # Price data fields
+    date = models.DateField()
+    open_price = models.DecimalField(max_digits=10, decimal_places=2)
+    high_price = models.DecimalField(max_digits=10, decimal_places=2)
+    low_price = models.DecimalField(max_digits=10, decimal_places=2)
+    close_price = models.DecimalField(max_digits=10, decimal_places=2)  # LTP (Last Trade Price)
+
+    # Additional trading data
+    percentage_change = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    volume = models.BigIntegerField(null=True, blank=True)  # Quantity traded
+    turnover = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.company.symbol} - {self.date} - NPR {self.close_price}"
+
+    def get_change_class(self):
+        """Return CSS class based on price change"""
+        if self.percentage_change > 0:
+            return 'text-green-600'
+        elif self.percentage_change < 0:
+            return 'text-red-600'
+        return 'text-gray-600'
+
+    def get_formatted_change(self):
+        """Return formatted percentage change with sign"""
+        if self.percentage_change:
+            sign = '+' if self.percentage_change > 0 else ''
+            return f"{sign}{self.percentage_change}%"
+        return "0.00%"
+
+    class Meta:
+        verbose_name = "Price History"
+        verbose_name_plural = "Price History"
+        ordering = ['-date']
+        unique_together = ('company', 'date')  # Ensure one record per company per date
