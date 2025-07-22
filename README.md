@@ -1,289 +1,286 @@
-# Sarbottam Cement Limited - Company Profile Website
+# Sarbottam Cement Limited - Stock Analysis Platform
 
-A comprehensive Django-based web application showcasing the company profile of Sarbottam Cement Limited (SARBTM), a leading cement manufacturer in Nepal.
+A Django-based web application that provides comprehensive company information and stock analysis for Sarbottam Cement Limited (SARBTM). The platform features real-time stock data scraping from NEPSE, AI-powered price predictions, and detailed company information.
 
-## 🏢 About Sarbottam Cement Limited
+## 🌟 Key Features
 
-Sarbottam Cement Limited is an innovator and pioneer of the cement industry of Nepal, being the first and only cement manufacturer to use a completely European production line. The company is publicly listed on the Nepal Stock Exchange (NEPSE) under the symbol SARBTM.
+### Company Information
+- Detailed company profile and history
+- Financial performance metrics
+- Corporate achievements and milestones
+- Industry position and market analysis
 
-### Key Features:
-- **Company Profile**: Comprehensive information about the company
-- **News Section**: Latest news and announcements
-- **Financial Data**: Stock market information and financial reports
-- **Achievements**: Company milestones and recognitions
-- **Responsive Design**: Modern, mobile-friendly interface with Tailwind CSS
+### Stock Market Data
+- Real-time price data from NEPSE
+- Historical price trends with OHLC data
+- Volume and turnover analysis
+- Percentage change tracking
+
+### AI-Powered Analysis
+- 5-day price predictions using machine learning
+- Multiple prediction models
+- Technical indicators and trend analysis
+- Confidence intervals for predictions
+
+### News & Updates
+- Latest company news and announcements
+- Categorized news articles
+- Searchable news archive
+- Featured news highlights
 
 ## 🛠 Technology Stack
 
-- **Backend**: Django 4.2+ (Python)
-- **Database**: MySQL
-- **Frontend**: HTML5, Tailwind CSS, JavaScript
-- **Icons**: Font Awesome
-- **Environment**: Python 3.10+
+### Backend
+- Python 3.13
+- Django 4.2+
+- MySQL Database
+- Selenium WebDriver
 
-## 📋 Database Schema
+### Data Science
+- scikit-learn 1.7.1
+- pandas 2.3.1
+- numpy 2.3.1
+- joblib 1.3.2
 
-The application includes four main models:
+### Frontend
+- HTML5
+- Tailwind CSS (via CDN)
+- JavaScript
+- Responsive Design
 
-### 1. Company Model
-- Basic company information (name, symbol, sector)
-- Contact details and location
-- Financial information (market price, P/E ratio, etc.)
-- Stock information and parent group details
+## 📊 Data Models
 
-### 2. CompanyNews Model
-Fields: `news_title`, `news_date`, `news_image`, `news_body`
-- News articles with featured status
-- SEO-friendly slugs and meta descriptions
-- Author and source attribution
+### Company (`sarbottam_company`)
+```python
+- name: Company name (default: "Sarbottam Cement Limited")
+- symbol: Stock symbol (default: "SARBTM")
+- sector: Industry sector
+- founded_year: Establishment date
+- headquarters: Company location
+- description: Detailed description
+- market_cap: Market capitalization
+- roe: Return on Equity
+- production_capacity: Manufacturing capacity
+- annual_revenue: Yearly revenue
+- net_profit: Annual profit
+- total_assets: Asset value
+```
 
-### 3. CompanyFinancial Model
-- Quarterly and annual financial data
-- Revenue, profit, EPS tracking
-- Fiscal year organization
+### News (`sarbottam_companynews`)
+```python
+- news_title: Article headline
+- news_date: Publication date
+- news_image: Article image URL
+- news_body: Main content
+- summary: Brief overview
+- category: News category
+- is_featured: Featured status
+- slug: URL-friendly identifier
+```
 
-### 4. CompanyAchievement Model
-- Company achievements and milestones
-- Categorized by type (awards, certifications, etc.)
-- Date-based organization
+### Financial Data (`sarbottam_companyfinancial`)
+```python
+- report_period: Financial period
+- total_revenue: Period revenue
+- net_income: Net profit
+- earnings_per_share: EPS
+- total_assets: Asset value
+- total_liabilities: Total liabilities
+- shareholders_equity: Equity value
+- report_date: Report date
+- report_file: Financial document
+```
 
-## 🚀 Installation & Setup
+### Price History (`sarbottam_pricehistory`)
+```python
+- date: Trading date
+- open_price: Opening price
+- high_price: Day's high
+- low_price: Day's low
+- close_price: Closing price
+- percentage_change: Daily change
+- volume: Trading volume
+- turnover: Trading value
+```
+
+### Achievements (`sarbottam_companyachievement`)
+```python
+- title: Achievement title
+- description: Detailed description
+- achievement_date: Date achieved
+- category: Achievement type
+```
+
+## 🤖 Machine Learning Pipeline
+
+### Data Collection
+- Automated scraping from NEPSE
+- Selenium-based data extraction
+- Pagination handling
+- Daily updates
+
+### Price Prediction
+- **Models Used**:
+  - Linear Regression
+  - Random Forest
+  - Simple Moving Average (fallback)
+- **Features**:
+  - Price trends
+  - Moving averages
+  - Volume indicators
+  - Market sentiment
+- **Output**: 5-day price forecasts with confidence intervals
+
+## 🚀 Setup Instructions
 
 ### Prerequisites
-- Python 3.10 or higher
+- Python 3.13+
 - MySQL Server
+- Chrome WebDriver (for Selenium)
 - Git
 
-### 1. Clone the Repository
+### Installation Steps
+
+1. **Clone Repository**
 ```bash
 git clone <repository-url>
 cd "Python Taskk"
 ```
 
-### 2. Create Virtual Environment
+2. **Create Virtual Environment**
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+venv\Scripts\activate  # Windows
 ```
 
-### 3. Install Dependencies
+3. **Install Dependencies**
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Database Setup
+4. **Configure Environment**
+- Copy `secret.py.example` to `secret.py`
+- Update database credentials
+- Set Chrome WebDriver path
 
-#### Option A: Using Django Migrations (Recommended)
-1. Update database settings in `secret.py`:
-```python
-DATABASE_CONFIG = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sarbottam_cement_db',
-        'USER': 'your_mysql_username',
-        'PASSWORD': 'your_mysql_password',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
-}
-```
-
-2. Run migrations:
+5. **Database Setup**
 ```bash
-python manage.py makemigrations
+# Option 1: Using SQL Script
+mysql -u root -p < database_setup.sql
+
+# Option 2: Using Django Migrations
 python manage.py migrate
 ```
 
-#### Option B: Using SQL Script
-1. Create MySQL database:
-```bash
-mysql -u root -p < database_setup.sql
-```
 
-### 5. Create Superuser
-```bash
-python manage.py createsuperuser
-```
-
-### 6. Collect Static Files
-```bash
-python manage.py collectstatic
-```
-
-### 7. Run Development Server
+6. **Run Development Server**
 ```bash
 python manage.py runserver
 ```
 
-Visit `http://localhost:8000` to view the application.
-
 ## 📁 Project Structure
-
 ```
 Python Taskk/
-├── cement_profile_app/          # Main Django project
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-├── sarbottam/                   # Main application
-│   ├── models.py               # Database models
-│   ├── views.py                # View logic
-│   ├── urls.py                 # URL patterns
-│   ├── admin.py                # Admin configuration
-│   └── migrations/
-├── templates/                   # HTML templates
-│   ├── base.html               # Base template
-│   └── sarbottam/
-│       ├── company_profile.html
-│       ├── news_list.html
-│       └── error.html
-├── static/                      # Static files
-│   ├── css/
-│   ├── js/
-│   └── images/
-├── media/                       # User uploads
-├── requirements.txt            # Python dependencies
-├── database_setup.sql          # MySQL schema
-├── secret.py                   # Configuration file
-└── README.md
+├── cement_profile_app/        # Django project
+├── sarbottam/                # Main application
+│   ├── models.py            # Data models
+│   ├── views.py             # View logic
+│   ├── ml_services.py       # ML components
+│   └── management/
+│       └── commands/        # Custom commands
+├── templates/                # HTML templates
+├── static/                   # Static assets
+├── drivers/                  # WebDriver
+└── requirements.txt         # Dependencies
 ```
 
-## 🌐 URLs and Navigation
-
-- `/` - Company Profile (Homepage)
-- `/news/` - News Listing
-- `/news/<slug>/` - Individual News Detail
-- `/financial/` - Financial Data
-- `/achievements/` - Company Achievements
-- `/admin/` - Django Admin Panel
-- `/api/company/` - Company Data API
-- `/api/news/` - Latest News API
-
-## 💾 Sample Data
-
-The application includes sample data for Sarbottam Cement Limited:
-
-### Company Information
-- **Name**: Sarbottam Cement Limited
-- **Symbol**: SARBTM
-- **Sector**: Manufacturing and Processing
-- **Headquarters**: Sunwal, Nawalparasi, State-5, Nepal
-- **Parent Group**: Saurabh Group
-
-### Sample News Articles
-1. Strong Q4 Performance Report
-2. New CSR Initiative Launch
-3. ARCHBUILD EXPO 2024 Participation
-4. Career Opportunities Announcement
-
-### Sample Achievements
-1. First European Production Line in Nepal
-2. ICRANP-IR BBB+ Rating
-3. Successful IPO Launch
-
-## 🔧 Configuration
-
-### Environment Variables (secret.py)
-```python
-SECRET_KEY = 'your-secret-key'
-DEBUG = True  # Set to False in production
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-
-DATABASE_CONFIG = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sarbottam_cement_db',
-        'USER': 'your_username',
-        'PASSWORD': 'your_password',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
-}
-
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Asia/Kathmandu'
-```
-
-## 📱 Features
+## 🌐 API Endpoints
 
 ### Company Profile
-- Hero section with company overview
-- Detailed company information
-- Stock market data display
-- Industry leadership highlights
+```
+GET /api/company/
+Response: Company details
+```
 
-### News Management
-- Featured news system
-- Search functionality
-- Pagination support
-- Responsive news cards
+### News
+```
+GET /api/news/
+Response: Latest news articles
+```
 
-### Admin Panel
-- Full CRUD operations for all models
-- Rich admin interface
-- Image upload support
-- Bulk operations
+### Price History
+```
+GET /api/price-history/
+Response: Historical prices
+```
 
-### Responsive Design
-- Mobile-first approach
-- Tailwind CSS framework
-- Modern card-based layout
-- Smooth animations and transitions
+### Price Predictions
+```
+GET /api/predictions/
+Response: 5-day forecasts
+```
 
-## 🔐 Security Features
+## 🔧 Management Commands
 
-- CSRF protection
-- SQL injection prevention
-- XSS protection
-- Secure file uploads
-- Environment-based configuration
+### Data Collection
+```bash
+# Scrape price history
+python manage.py scrape_price_history --limit 20
+
+# Clear price data
+python manage.py clear_price_data
+
+# Generate predictions
+python manage.py predict_prices
+```
+
+## 🔒 Security Features
+
+- CSRF Protection
+- SQL Injection Prevention
+- Secure File Uploads
+- Environment Variables
+- Access Control
+
+## 📈 Performance Optimization
+
+- Database Indexing
+- Query Optimization
+- Caching Strategy
+- Efficient Data Loading
 
 ## 🌍 Production Deployment
 
-### Environment Setup
-1. Set `DEBUG = False` in settings
-2. Configure proper `ALLOWED_HOSTS`
-3. Use environment variables for sensitive data
-4. Set up proper MySQL database
-5. Configure static file serving
-6. Enable HTTPS
+### Configuration
+- Debug Mode: Disabled
+- Static Files: CDN/Nginx
+- Database: Production MySQL
+- HTTPS: Enabled
 
-### Database Configuration
-- Use production MySQL server
-- Configure database backups
-- Set up proper user permissions
-- Enable slow query logging
+### Monitoring
+- Error Logging
+- Performance Metrics
+- Database Monitoring
+- Scheduled Tasks
 
-## 📊 API Endpoints
-
-### Company Data API
-```
-GET /api/company/
-Response: JSON with company information
-```
-
-### Latest News API
-```
-GET /api/news/
-Response: JSON with latest news articles
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## 📄 License
+## 📝 License
 
 This project is created for educational and demonstration purposes.
 
+## 🤝 Contributing
+
+1. Fork repository
+2. Create feature branch
+3. Commit changes
+4. Submit pull request
+
 ## 📞 Support
 
-For questions or support regarding this application, please refer to the documentation or create an issue in the repository.
+For issues or questions:
+1. Check documentation
+2. Create GitHub issue
+3. Contact development team
 
 ---
 
-**Note**: This application was created to demonstrate a modern Django web application with MySQL database integration, showcasing real company data from Nepal's stock market websites including nepalstock.com, sharesansar.com, and merolagani.com.
+**Note**: This application demonstrates modern Django development practices, integrating web scraping, machine learning, and financial data analysis. It serves as a comprehensive platform for analyzing Sarbottam Cement Limited's stock performance on the Nepal Stock Exchange (NEPSE).
