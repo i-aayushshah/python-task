@@ -40,8 +40,8 @@
         {% if search_query %}
         <div class="mb-8">
             <p class="text-gray-600">
-                {% if news_page.object_list %}
-                    Showing {{ news_page.object_list|length }} result{{ news_page.object_list|length|pluralize }} for "<strong>{{ search_query }}</strong>"
+                {% if news.object_list %}
+                    Showing {{ news.object_list|length }} result{{ news.object_list|length|pluralize }} for "<strong>{{ search_query }}</strong>"
                 {% else %}
                     No results found for "<strong>{{ search_query }}</strong>"
                 {% endif %}
@@ -50,12 +50,12 @@
         </div>
         {% endif %}
 
-        {% if news_page.object_list %}
+        {% if news.object_list %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {% for news in news_page.object_list %}
+            {% for article in news.object_list %}
             <article class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
-                {% if news.news_image %}
-                <img src="{{ news.news_image.url }}" alt="{{ news.news_title }}" class="w-full h-48 object-cover">
+                {% if article.news_image %}
+                <img src="{{ article.news_image }}" alt="{{ article.news_title }}" class="w-full h-48 object-cover">
                 {% else %}
                 <div class="w-full h-48 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
                     <i class="fas fa-newspaper text-white text-4xl"></i>
@@ -65,33 +65,37 @@
                 <div class="p-6">
                     <div class="flex items-center text-sm text-gray-500 mb-3">
                         <i class="fas fa-calendar mr-2"></i>
-                        {{ news.news_date|date:"M d, Y" }}
-                        {% if news.is_featured %}
+                        {{ article.news_date|date:"M d, Y" }}
+                        {% if article.is_featured %}
                         <span class="ml-4 bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">Featured</span>
                         {% endif %}
-                        {% if news.author %}
-                        <span class="ml-4">by {{ news.author }}</span>
+                        {% if article.category %}
+                        <span class="ml-4 bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">{{ article.category }}</span>
                         {% endif %}
                     </div>
 
                     <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
-                        {{ news.news_title }}
+                        {{ article.news_title }}
                     </h3>
 
                     <p class="text-gray-600 mb-4 line-clamp-3">
-                        {{ news.news_body|truncatewords:25 }}
+                        {% if article.summary %}
+                            {{ article.summary }}
+                        {% else %}
+                            {{ article.news_body|truncatewords:25 }}
+                        {% endif %}
                     </p>
 
                     <div class="flex justify-between items-center">
-                        {% if news.slug %}
-                        <a href="{% url 'sarbottam:news_detail' news.slug %}"
+                        {% if article.slug %}
+                        <a href="{% url 'sarbottam:news_detail' article.slug %}"
                            class="text-indigo-600 hover:text-indigo-800 font-semibold">
                             Read more <i class="fas fa-arrow-right ml-1"></i>
                         </a>
                         {% endif %}
 
-                        {% if news.source %}
-                        <span class="text-sm text-gray-400">{{ news.source }}</span>
+                        {% if article.category %}
+                        <span class="text-sm text-gray-400">{{ article.category }}</span>
                         {% endif %}
                     </div>
                 </div>
@@ -100,24 +104,24 @@
         </div>
 
         <!-- Pagination -->
-        {% if news_page.has_other_pages %}
+        {% if news.has_other_pages %}
         <div class="mt-12 flex justify-center">
             <nav class="flex items-center space-x-2">
-                {% if news_page.has_previous %}
+                {% if news.has_previous %}
                 <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}"
                    class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-500 hover:bg-gray-50">
                     <i class="fas fa-angle-double-left"></i>
                 </a>
-                <a href="?page={{ news_page.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}"
+                <a href="?page={{ news.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}"
                    class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-500 hover:bg-gray-50">
                     <i class="fas fa-angle-left"></i>
                 </a>
                 {% endif %}
 
-                {% for page_num in news_page.paginator.page_range %}
-                {% if page_num == news_page.number %}
+                {% for page_num in news.paginator.page_range %}
+                {% if page_num == news.number %}
                 <span class="px-3 py-2 rounded-md bg-indigo-600 text-white">{{ page_num }}</span>
-                {% elif page_num > news_page.number|add:'-3' and page_num < news_page.number|add:'3' %}
+                {% elif page_num > news.number|add:'-3' and page_num < news.number|add:'3' %}
                 <a href="?page={{ page_num }}{% if search_query %}&search={{ search_query }}{% endif %}"
                    class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-500 hover:bg-gray-50">
                     {{ page_num }}
@@ -125,12 +129,12 @@
                 {% endif %}
                 {% endfor %}
 
-                {% if news_page.has_next %}
-                <a href="?page={{ news_page.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}"
+                {% if news.has_next %}
+                <a href="?page={{ news.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}"
                    class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-500 hover:bg-gray-50">
                     <i class="fas fa-angle-right"></i>
                 </a>
-                <a href="?page={{ news_page.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}"
+                <a href="?page={{ news.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}"
                    class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-500 hover:bg-gray-50">
                     <i class="fas fa-angle-double-right"></i>
                 </a>
@@ -139,32 +143,29 @@
         </div>
 
         <div class="mt-4 text-center text-gray-500 text-sm">
-            Showing {{ news_page.start_index }} to {{ news_page.end_index }} of {{ news_page.paginator.count }} results
+            Showing {{ news.start_index }} to {{ news.end_index }} of {{ news.paginator.count }} results
         </div>
         {% endif %}
-
         {% else %}
-        <!-- Empty State -->
+        <!-- No News Found -->
         <div class="text-center py-16">
-            <i class="fas fa-newspaper text-gray-400 text-6xl mb-4"></i>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">No News Found</h3>
-            <p class="text-gray-600 mb-6">
+            <i class="fas fa-newspaper text-gray-400 text-6xl mb-6"></i>
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">No News Found</h3>
+            <p class="text-gray-600 max-w-2xl mx-auto">
                 {% if search_query %}
-                    We couldn't find any news matching your search criteria.
+                    No news articles match your search for "<strong>{{ search_query }}</strong>". Try a different search term.
                 {% else %}
                     There are no news articles available at the moment.
                 {% endif %}
             </p>
             {% if search_query %}
-            <a href="{% url 'sarbottam:news_list' %}"
-               class="inline-flex items-center bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
-                View All News
-            </a>
-            {% else %}
-            <a href="{% url 'sarbottam:company_profile' %}"
-               class="inline-flex items-center bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
-                Back to Company Profile
-            </a>
+            <div class="mt-6">
+                <a href="{% url 'sarbottam:news_list' %}"
+                   class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                    <i class="fas fa-list mr-2"></i>
+                    View All News
+                </a>
+            </div>
             {% endif %}
         </div>
         {% endif %}
