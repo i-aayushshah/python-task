@@ -154,106 +154,146 @@ class Command(BaseCommand):
             self.stdout.write('Waiting for price history data to load...')
             time.sleep(5)
 
-            # Try multiple selectors for the table
-            table_selectors = [
-                "#pricehistorys tbody tr",
-                ".price-history tbody tr",
-                "table tbody tr",
-                ".table tbody tr"
-            ]
-
-            rows = []
-            for selector in table_selectors:
-                try:
-                    rows = driver.find_elements(By.CSS_SELECTOR, selector)
-                    if rows:
-                        self.stdout.write(f'✓ Found {len(rows)} rows using selector: {selector}')
-                        break
-                except:
-                    continue
-
-            if not rows:
-                self.stdout.write(self.style.WARNING('No table rows found, trying alternative approach...'))
-                # Try to find any table data
-                try:
-                    rows = driver.find_elements(By.TAG_NAME, "tr")
-                    rows = [row for row in rows if len(row.find_elements(By.TAG_NAME, "td")) >= 5]
-                    self.stdout.write(f'Found {len(rows)} potential data rows')
-                except:
-                    pass
-
-            if not rows:
-                self.stdout.write(self.style.ERROR('No price history data found on the page'))
-                return []
-
-            # Extract data from rows
+            # Collect data from multiple pages if needed
             scraped_data = []
-            self.stdout.write(f'Extracting data from {min(len(rows), limit)} rows...')
+            current_page = 1
+            records_needed = limit
 
-            for i, row in enumerate(rows[:limit]):
-                try:
-                    cols = row.find_elements(By.TAG_NAME, "td")
-                    if len(cols) >= 5:  # Ensure we have enough columns
-                        # Debug: Print all column data to understand structure (comment out for production)
-                        # self.stdout.write(f'Row {i+1} columns: {[col.text.strip() for col in cols]}')
+            while len(scraped_data) < records_needed and current_page <= 5:  # Limit to 5 pages max
+                self.stdout.write(f'Scraping page {current_page}...')
 
-                        # Based on actual table structure:
-                        # Column 0: Serial Number (1, 2, 3...)
-                        # Column 1: Date (2025-07-21)
-                        # Column 2: Open (888.90)
-                        # Column 3: High (896.00)
-                        # Column 4: Low (880.00)
-                        # Column 5: Close (892.88)
-                        # Column 6: Volume (79,473)
+                # Try multiple selectors for the table
+                table_selectors = [
+                    "#pricehistorys tbody tr",
+                    ".price-history tbody tr",
+                    "table tbody tr",
+                    ".table tbody tr"
+                ]
 
-                        if len(cols) < 7:
-                            self.stdout.write(self.style.WARNING(f'Row {i+1}: Not enough columns ({len(cols)})'))
-                            continue
+                rows = []
+                for selector in table_selectors:
+                    try:
+                        rows = driver.find_elements(By.CSS_SELECTOR, selector)
+                        if rows:
+                            self.stdout.write(f'✓ Found {len(rows)} rows on page {current_page} using selector: {selector}')
+                            break
+                    except:
+                        continue
 
-                        # Skip if first column is not a number (header row)
-                        try:
-                            int(cols[0].text.strip())
-                        except ValueError:
-                            self.stdout.write(self.style.WARNING(f'Row {i+1}: Skipping header/invalid row'))
-                            continue
+                if not rows:
+                    self.stdout.write(self.style.WARNING(f'No table rows found on page {current_page}'))
+                    break
 
-                        # Extract data
-                        date_str = cols[1].text.strip()
-                        open_price = self.clean_price(cols[2].text.strip())
-                        high_price = self.clean_price(cols[3].text.strip())
-                        low_price = self.clean_price(cols[4].text.strip())
-                        close_price = self.clean_price(cols[5].text.strip())
-                        volume = self.clean_volume(cols[6].text.strip())
+                # Extract data from current page
+                page_data = []
+                records_from_page = min(len(rows), records_needed - len(scraped_data))
 
-                        if not date_str or not close_price:
-                            self.stdout.write(self.style.WARNING(f'Row {i+1}: Missing date or price data'))
-                            continue
+                for i, row in enumerate(rows[:records_from_page]):
+                    try:
+                        cols = row.find_elements(By.TAG_NAME, "td")
+                        if len(cols) >= 7:  # Ensure we have enough columns
 
-                        # Parse date
-                        try:
-                            date_obj = self.parse_date(date_str)
-                            if not date_obj:
-                                self.stdout.write(self.style.WARNING(f'Row {i+1}: Could not parse date: {date_str}'))
+                            # Skip if first column is not a number (header row)
+                            try:
+                                int(cols[0].text.strip())
+                            except ValueError:
                                 continue
-                        except Exception as e:
-                            self.stdout.write(self.style.WARNING(f'Row {i+1}: Date parsing error for "{date_str}": {str(e)}'))
+
+                            # Extract data based on NEPSE table structure:
+                            # Column 0: Serial Number (1, 2, 3...)
+                            # Column 1: Date (2025-07-21)
+                            # Column 2: Open (888.90)
+                            # Column 3: High (896.00)
+                            # Column 4: Low (880.00)
+                            # Column 5: Close (892.88)
+                            # Column 6: Volume (79,473)
+                            date_str = cols[1].text.strip()
+                            open_price = self.clean_price(cols[2].text.strip())
+                            high_price = self.clean_price(cols[3].text.strip())
+                            low_price = self.clean_price(cols[4].text.strip())
+                            close_price = self.clean_price(cols[5].text.strip())
+                            volume = self.clean_volume(cols[6].text.strip())
+
+                            if not date_str or not close_price:
+                                continue
+
+                            # Parse date
+                            try:
+                                date_obj = self.parse_date(date_str)
+                                if not date_obj:
+                                    continue
+                            except Exception:
+                                continue
+
+                            data_point = {
+                                'date': date_obj,
+                                'open_price': open_price or close_price,
+                                'high_price': high_price or close_price,
+                                'low_price': low_price or close_price,
+                                'close_price': close_price,
+                                'volume': volume,
+                            }
+
+                            page_data.append(data_point)
+                            self.stdout.write(f'✓ Page {current_page}, Row {i+1}: {date_obj} - NPR {close_price}')
+
+                    except Exception as e:
+                        self.stdout.write(self.style.WARNING(f'Error parsing page {current_page}, row {i+1}: {str(e)}'))
+                        continue
+
+                scraped_data.extend(page_data)
+                self.stdout.write(f'Collected {len(page_data)} records from page {current_page}. Total: {len(scraped_data)}')
+
+                # Check if we have enough data
+                if len(scraped_data) >= records_needed:
+                    break
+
+                # Try to go to next page
+                try:
+                    # Look for pagination next button
+                    next_selectors = [
+                        "a[aria-label='Next page']",
+                        ".pagination-next a",
+                        ".ngx-pagination .pagination-next a",
+                        "li.pagination-next a",
+                        ".next",
+                        ".page-next"
+                    ]
+
+                    next_clicked = False
+                    for selector in next_selectors:
+                        try:
+                            next_button = driver.find_element(By.CSS_SELECTOR, selector)
+                            if next_button.is_enabled() and next_button.is_displayed():
+                                driver.execute_script("arguments[0].click();", next_button)
+                                self.stdout.write(f'✓ Clicked next page button using: {selector}')
+                                next_clicked = True
+                                break
+                        except:
                             continue
 
-                        data_point = {
-                            'date': date_obj,
-                            'open_price': open_price or close_price,  # Use close price if open not available
-                            'high_price': high_price or close_price,
-                            'low_price': low_price or close_price,
-                            'close_price': close_price,
-                            'volume': volume,
-                        }
+                    if not next_clicked:
+                        # Try clicking page number
+                        try:
+                            page_number = current_page + 1
+                            page_link = driver.find_element(By.XPATH, f"//a[contains(text(), '{page_number}')]")
+                            driver.execute_script("arguments[0].click();", page_link)
+                            self.stdout.write(f'✓ Clicked page {page_number}')
+                            next_clicked = True
+                        except:
+                            pass
 
-                        scraped_data.append(data_point)
-                        self.stdout.write(f'✓ Row {i+1}: {date_obj} - NPR {close_price}')
+                    if not next_clicked:
+                        self.stdout.write(f'Could not find next page button. Stopping at page {current_page}')
+                        break
+
+                    # Wait for new page to load
+                    time.sleep(3)
+                    current_page += 1
 
                 except Exception as e:
-                    self.stdout.write(self.style.WARNING(f'Error parsing row {i+1}: {str(e)}'))
-                    continue
+                    self.stdout.write(self.style.WARNING(f'Error navigating to next page: {str(e)}'))
+                    break
 
             self.stdout.write(self.style.SUCCESS(f'Successfully scraped {len(scraped_data)} records from NEPSE'))
             return scraped_data
